@@ -10,9 +10,43 @@ public class GameController : MonoBehaviour
     [SerializeField]
     BoardContr _boardScript;
 
+    [SerializeField]
+    GameTileContFactory _contentFactory;
 
+    [SerializeField]
+    Camera _camera;
+    private Ray TouchRay => _camera.ScreenPointToRay(Input.mousePosition);
+
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            HandleTouch();
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            HandleAlternative();
+        }
+    }
+    void HandleTouch()
+    {
+        GameTile tile = _boardScript.GetTile(TouchRay);
+        if(tile != null)
+        {
+            _boardScript.ToggleWall(tile);
+        }
+    }
+    void HandleAlternative()
+    {
+        GameTile tile = _boardScript.GetTile(TouchRay);
+        if (tile != null)
+        {
+            _boardScript.ToggleDestination(tile);
+        }
+    }
     void Start()
     {
-        _boardScript.Initialize(_boardSize);
+        _boardScript.Initialize(_boardSize, _contentFactory);
     }
 }
