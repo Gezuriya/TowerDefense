@@ -5,10 +5,10 @@ using UnityEngine.SceneManagement;
 
 [CreateAssetMenu]
 
-public class GameTileContFactory : ScriptableObject
+public class GameTileContFactory : GameObjectFactory
 {
     [SerializeField]
-    GameTileContent _destPrefab, _emptyPrefab, _wallPrefab;
+    GameTileContent _destPrefab, _emptyPrefab, _wallPrefab, _spawnPointPrefab;
     public void Reclaim(GameTileContent content)
     {
         Destroy(content.gameObject);
@@ -23,38 +23,16 @@ public class GameTileContFactory : ScriptableObject
                 return Get(_emptyPrefab);
             case GameTileContentType.Wall:
                 return Get(_wallPrefab);
+            case GameTileContentType.SpawnPoint:
+                return Get(_spawnPointPrefab);
         }
 
         return null;
     }
     private GameTileContent Get(GameTileContent prefab)
     {
-        GameTileContent instance = Instantiate(prefab);
+        GameTileContent instance = CreateGameObjectInstance(prefab);
         instance.OriginFactory = this;
-        MoveToFactoryScene(instance.gameObject);
         return instance;
-    }
-
-    private Scene _contentScene;
-
-    void MoveToFactoryScene(GameObject o)
-    {
-        if (!_contentScene.isLoaded)
-        {
-            if (Application.isEditor)
-            {
-                _contentScene = SceneManager.GetSceneByName(name);
-                if (!_contentScene.isLoaded)
-                {
-                    _contentScene = SceneManager.CreateScene(name);
-                }
-
-            }
-            else
-            {
-                _contentScene = SceneManager.CreateScene(name);
-            }
-        }
-        SceneManager.MoveGameObjectToScene(o, _contentScene);
     }
 }

@@ -42,7 +42,14 @@ public class GameController : MonoBehaviour
         GameTile tile = _boardScript.GetTile(TouchRay);
         if (tile != null)
         {
-            _boardScript.ToggleDestination(tile);
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                _boardScript.ToggleDestination(tile);
+            }
+            else
+            {
+                _boardScript.ToggleSpawners(tile);
+            }
         }
     }
     void Start()

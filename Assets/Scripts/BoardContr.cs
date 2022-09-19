@@ -13,6 +13,10 @@ public class BoardContr : MonoBehaviour
 
     private Queue<GameTile> _searchFrontier = new Queue<GameTile>();
     private GameTileContFactory _contentFactory;
+
+    private List<GameTile> _spawnPoints = new List<GameTile>();
+
+    public int SpawnPointCount => _spawnPoints.Count;
     public void Initialize(Vector2Int size, GameTileContFactory contentFactory)
     {
         _size = size;
@@ -49,6 +53,7 @@ public class BoardContr : MonoBehaviour
             }
         }
         ToggleDestination(_tiles[_tiles.Length/2]);
+        ToggleSpawners(_tiles[0]);
     }
 
     public bool FindPath()
@@ -124,6 +129,23 @@ public class BoardContr : MonoBehaviour
             FindPath();
         }
     }
+
+    public void ToggleSpawners(GameTile tile)
+    {
+        if(tile.Content.Type == GameTileContentType.SpawnPoint)
+        {
+            if(_spawnPoints.Count > 1)
+            {
+                _spawnPoints.Remove(tile);
+                tile.Content = _contentFactory.Get(GameTileContentType.Empty);
+            }
+        }
+        else if(tile.Content.Type == GameTileContentType.Empty)
+        {
+            tile.Content = _contentFactory.Get(GameTileContentType.SpawnPoint);
+            _spawnPoints.Add(tile);
+        }
+    }
     public void ToggleWall(GameTile tile)
     {
         if(tile.Content.Type == GameTileContentType.Wall)
@@ -154,5 +176,11 @@ public class BoardContr : MonoBehaviour
             }
         }
         return null;
+    }
+
+
+    public GameTile GetSpawnPoint(int index)
+    {
+        return _spawnPoints[index];
     }
 }
